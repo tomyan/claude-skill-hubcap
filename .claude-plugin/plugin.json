@@ -1,6 +1,6 @@
 {
   "name": "hubcap",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chrome DevTools Protocol CLI skill — control Chrome, scrape pages, test web UIs, and automate browsers from Claude Code.",
   "repository": "https://github.com/tomyan/claude-skill-hubcap",
   "homepage": "https://hubcap.tomyandell.dev",
