@@ -45,14 +45,13 @@ Run `hubcap help` (no args) for a categorized list of all commands.
 
 By default, all commands target the **first tab**. Use `--target <id>` to target a specific tab.
 
-- `hubcap new <url>` creates a new tab and navigates to the URL in one step. Returns `{"targetId": "..."}`.
+- `hubcap new --wait <url>` creates a new tab, navigates, and waits for load. Returns `{"targetId": "...", "loaded": true}`.
 - Use `--target <id>` on subsequent commands to operate on that tab.
-- When the user says "open a new tab and go to X", use `hubcap new <url>` — do NOT use separate `new` + `goto` (goto would hit the first tab, not the new one).
+- When the user says "open a new tab and go to X", use `hubcap new --wait <url>` — do NOT use separate `new` + `goto` (goto would hit the first tab, not the new one).
 
 ```bash
-# Open a new tab and work in it
-TARGET=$(hubcap new https://example.com | jq -r .targetId)
-hubcap --target "$TARGET" wait 'h1'
+# Open a new tab, wait for load, then work in it
+TARGET=$(hubcap new --wait https://example.com | jq -r .targetId)
 hubcap --target "$TARGET" screenshot --output page.png
 ```
 
