@@ -41,6 +41,29 @@ Run `hubcap help` (no args) for a categorized list of all commands.
 **Utility**: `retry`, `pipe`, `shell`, `record`, `setup`, `help`
 **Advanced**: `raw`, `dialog`, `highlight`
 
+## Tab management
+
+By default, all commands target the **first tab**. Use `--target <id>` to target a specific tab.
+
+- `hubcap new <url>` creates a new tab and navigates to the URL in one step. Returns `{"targetId": "..."}`.
+- Use `--target <id>` on subsequent commands to operate on that tab.
+- When the user says "open a new tab and go to X", use `hubcap new <url>` — do NOT use separate `new` + `goto` (goto would hit the first tab, not the new one).
+
+```bash
+# Open a new tab and work in it
+TARGET=$(hubcap new https://example.com | jq -r .targetId)
+hubcap --target "$TARGET" wait 'h1'
+hubcap --target "$TARGET" screenshot --output page.png
+```
+
+## Screenshots
+
+- `hubcap screenshot --output file.png` captures the visible viewport
+- `hubcap screenshot --output file.png --full` captures the **full scrollable page**
+- `hubcap screenshot --output file.png --selector '.element'` captures a specific element
+
+Use `--full` when the user wants to capture the entire page including content below the fold.
+
 ## Key patterns
 
 ```bash
