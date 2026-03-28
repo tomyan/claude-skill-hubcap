@@ -1,6 +1,6 @@
 ---
 name: hubcap
-description: "Chrome DevTools Protocol CLI. Use when the user wants to control Chrome, automate browsers, scrape web pages, take screenshots, test web UIs, monitor network traffic, check accessibility, or interact with page elements. Hubcap provides 110+ composable commands that connect to Chrome via WebSocket."
+description: "Chrome DevTools Protocol CLI. Use when the user wants to control Chrome, automate browsers, scrape web pages, take screenshots, test web UIs, monitor network traffic, check accessibility, or interact with page elements. Hubcap provides 120 composable commands that connect to Chrome via WebSocket."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
@@ -36,7 +36,7 @@ Run `hubcap help` (no args) for a categorized list of all commands.
 **Storage**: `cookies`, `storage`, `session`, `clipboard`
 **Analyze**: `a11y`, `coverage`, `csscoverage`, `domsnapshot`, `listeners`, `metrics`, `stylesheets`
 **Profile**: `heapsnapshot`, `trace`
-**JavaScript**: `eval`, `evalframe`, `run`
+**JavaScript**: `eval`, `evalframe`, `run`, `bridge`
 **Assert**: `assert` (subcommands: `text`, `title`, `url`, `exists`, `visible`, `count`)
 **Utility**: `retry`, `pipe`, `shell`, `record`, `setup`, `help`
 **Advanced**: `raw`, `dialog`, `highlight`
@@ -62,6 +62,27 @@ hubcap --target "$TARGET" screenshot --output page.png
 - `hubcap screenshot --output file.png --selector '.element'` captures a specific element
 
 Use `--full` when the user wants to capture the entire page including content below the fold.
+
+## JavaScript evaluation
+
+- `hubcap eval '<expression>'` supports top-level `await` (e.g. `hubcap eval 'await fetch("/api/data")'`)
+- `hubcap run <file.js>` also supports top-level `await`
+
+## Bridge (persistent two-way channel)
+
+`hubcap bridge` keeps a bidirectional message channel open between stdin/stdout and JavaScript running in a page. The script gets `send()` and `messages` (async iterator) in scope. Messages flow as LDJSON.
+
+```bash
+# Echo messages back with transformation
+echo '{"data":{"n":7}}' | hubcap bridge --target "$TARGET" '
+  for await (const msg of messages) {
+    send({doubled: msg.n * 2});
+    break;
+  }
+'
+```
+
+Use `--file` to load the script from disk. Heartbeats ensure the JS exits if hubcap dies. Multiple bridges can coexist in the same tab.
 
 ## Key patterns
 
